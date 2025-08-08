@@ -27,10 +27,17 @@ function StatsPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/stats');
-      if (!response.ok) throw new Error('Failed to fetch stats');
-      const data = await response.json();
-      setUrls(data);
+      if (import.meta.env.PROD) {
+        // Use localStorage for demo purposes in production
+        const urls = JSON.parse(localStorage.getItem('shortenedUrls') || '[]');
+        setUrls(urls);
+      } else {
+        // Use API in development
+        const response = await fetch('/api/stats');
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        const data = await response.json();
+        setUrls(data);
+      }
     } catch (error) {
       setError('Failed to load statistics');
       console.error('Error fetching stats:', error);
